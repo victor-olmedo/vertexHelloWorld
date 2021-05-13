@@ -42,7 +42,7 @@ public class MainVerticle extends AbstractVerticle {
     // Route paths to corresponding handlers
     router.get("/hello").respond(response -> Future.succeededFuture(new JsonObject().put("hello", "world")));
     router.get("/cars/:carId").handler(new CarHandler(db));
-    router.post("/cars").handler(new AddCarHandler(db));
+    router.post("/addCar").handler(new AddCarHandler(db));
 
     // Welcome user in root path:
 
