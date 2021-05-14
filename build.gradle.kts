@@ -28,6 +28,7 @@ application {
 }
 
 dependencies {
+  implementation("io.vertx:vertx-redis-client:4.0.3")
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-web")
   testImplementation("io.vertx:vertx-junit5")

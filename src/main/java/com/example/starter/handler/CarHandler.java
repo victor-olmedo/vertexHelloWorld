@@ -6,6 +6,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
+import java.util.Optional;
+
 public class CarHandler implements Handler<RoutingContext> {
 
   private JsonArray db;
@@ -18,9 +20,9 @@ public class CarHandler implements Handler<RoutingContext> {
   public void handle(RoutingContext rc){
 
     // Check if given carID is a valid one
-    JsonObject responseJson = idValidator.validate(rc, db);
+    Optional<JsonObject> responseJson = idValidator.validate(rc, db);
 
     // Return car info
-    if (responseJson != null) rc.json(responseJson);
+    if (responseJson.isPresent()) rc.json(responseJson.get());
   }
 }

@@ -2,6 +2,7 @@ package com.example.starter.handler;
 
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -25,9 +26,9 @@ public class AddCarHandler  implements Handler<RoutingContext> {
     // Return error message if not all fields are specified
     if (attributes.get("car_make") == null || attributes.get("car_model") == null || attributes.get("car_model_year") == null){
       rc.response()
-        .putHeader("content-type", "text/html")
+        .putHeader("content-type", "application/json")
         .setStatusCode(HTTP_BAD_REQUEST)
-        .end("<h1>All car fields (car_make, car_model and car_model_year) must be specified</h1>");
+        .end(Json.encodePrettily(new JsonObject().put("response","All car fields (car_make, car_model and car_model_year) must be specified")));
       return;
     }
 
