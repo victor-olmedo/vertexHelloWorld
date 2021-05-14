@@ -2,6 +2,8 @@ package com.example.starter;
 
 import com.example.starter.handler.AddCarHandler;
 import com.example.starter.handler.CarHandler;
+import com.example.starter.handler.ModifyCarHandler;
+import com.example.starter.handler.RemoveCarHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
@@ -43,6 +45,8 @@ public class MainVerticle extends AbstractVerticle {
     router.get("/hello").respond(response -> Future.succeededFuture(new JsonObject().put("hello", "world")));
     router.get("/cars/:carId").handler(new CarHandler(db));
     router.post("/addCar").handler(new AddCarHandler(db));
+    router.post("/removeCar/:carId").handler(new RemoveCarHandler(db));
+    router.post("/modifyCar/:carId").handler(new ModifyCarHandler(db));
 
     // Welcome user in root path:
 

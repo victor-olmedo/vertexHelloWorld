@@ -23,11 +23,11 @@ public class AddCarHandler  implements Handler<RoutingContext> {
     MultiMap attributes = rc.request().formAttributes();
 
     // Return error message if not all fields are specified
-    if (attributes.get("car_make") == null || attributes.get("car_model") == null || attributes.get("car_year") == null){
+    if (attributes.get("car_make") == null || attributes.get("car_model") == null || attributes.get("car_model_year") == null){
       rc.response()
         .putHeader("content-type", "text/html")
         .setStatusCode(HTTP_BAD_REQUEST)
-        .end("<h1>All car fields (car_make, car_model and car_year) must be specified</h1>");
+        .end("<h1>All car fields (car_make, car_model and car_model_year) must be specified</h1>");
       return;
     }
 
@@ -36,9 +36,12 @@ public class AddCarHandler  implements Handler<RoutingContext> {
     .put("id", db.size()+1)
     .put("car_make", attributes.get("car_make"))
     .put("car_model", attributes.get("car_model"))
-    .put("car_year", attributes.get("car_year"));
+    .put("car_model_year", attributes.get("car_model_year"));
 
+    // Add new car to the database
     db.add(newCar);
+
+    // Return that new car as a JSON file
     rc.json(newCar);
   }
 }
