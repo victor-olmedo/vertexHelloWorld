@@ -27,11 +27,17 @@ public class RemoveCarHandlerRedis  implements Handler<RoutingContext> {
     String carId = rc.pathParam("carId");
     if(idValidator.validate(carId)){
       // delete car from db
-      ArrayList<String> input = new ArrayList<String>();
+      ArrayList<String> input = new ArrayList<>();
       input.add(rc.pathParam("carId"));
-      redis.del(input);
-      // Return that new car as a JSON file
-      rc.json(Json.encodePrettily("<h1>Successfully deleted<h1>"));
+      redis.del(input).onSuccess( res -> {
+
+        // Return that new car as a JSON file
+        rc.json(Json.encodePrettily("<h1>Successfully deleted<h1>"));
+        }
+      ).onFailure(result -> rc.response()
+        .putHeader("content-type", "application/json")
+        .setStatusCode(HTTP_BAD_REQUEST)
+        .end(Json.encodePrettily(new JsonObject().put("response", "Id does not match our records"))));
       return;
     }
     rc.response()

@@ -27,17 +27,21 @@ public class ModifyCarHandlerRedis  implements Handler<RoutingContext> {
     String carId = rc.pathParam("carId");
 
     if(idValidator.validate(carId) && rc.request().formAttributes().get("car_make") != null){
-      ArrayList<String> input = new ArrayList<String>();
+      ArrayList<String> input = new ArrayList<>();
       input.add(carId);
-      input.add(rc.request().formAttributes().get("car_make"));
-      redis.set(input).onComplete(result ->
-        rc.json(new JsonObject().put("response", "Successfully modified"))
-      );
-      return;
+      redis.exists(input, res -> {
+        if(res.result().toBoolean()) {
+          input.add(rc.request().formAttributes().get("car_make"));
+          redis.set(input).onComplete(result ->
+            rc.json(new JsonObject().put("response", "Successfully modified"))
+          );
+          return;
+        }
+        rc.response()
+          .putHeader("content-type", "application/json")
+          .setStatusCode(HTTP_BAD_REQUEST)
+          .end(Json.encodePrettily(new JsonObject().put("response", "Not a valid id and/or car_make missing")));
+      });
     }
-    rc.response()
-      .putHeader("content-type", "application/json")
-      .setStatusCode(HTTP_BAD_REQUEST)
-      .end(Json.encodePrettily(new JsonObject().put("response", "Not a valid id and/or car_make missing")));
   }
 }

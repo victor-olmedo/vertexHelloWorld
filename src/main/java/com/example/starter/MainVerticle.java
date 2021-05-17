@@ -56,14 +56,21 @@ public class MainVerticle extends AbstractVerticle {
           vertx, "redis://localhost:6379/0")
           .connect()
           .onSuccess(conn -> {
+
             RedisAPI redis = RedisAPI.api(conn);
+
+            redis.dbsize()
+              .onComplete(result -> System.out.println(result.result()));
+
+            //  First Initialization
             ArrayList<String> input;
             for (Object element:db) {
-              input = new ArrayList<String>();
+              input = new ArrayList<>();
               input.add(((JsonObject) element).getValue("id").toString());
               input.add(((JsonObject) element).getValue("car_model").toString());
               redis.set(input);
             }
+
             router.get("/carsRedis/:carId").handler(new CarHandlerRedis(redis));
             router.post("/addCarRedis").handler(new AddCarHandlerRedis(redis));
             router.post("/removeCarRedis/:carId").handler(new RemoveCarHandlerRedis(redis));

@@ -11,6 +11,8 @@ import io.vertx.redis.client.RedisConnection;
 
 import java.util.Optional;
 
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+
 public class CarHandlerRedis implements Handler<RoutingContext> {
 
   private RedisAPI redis;
@@ -25,8 +27,16 @@ public class CarHandlerRedis implements Handler<RoutingContext> {
 
     // Return car info
 
-    //TODO: null pointer exception cuando no está el coche en la base de datos
     if (idValidator.validate(carId))
-      redis.get(carId).onComplete( value -> rc.json(new JsonObject().put( carId, value.result().toString() )));
+      redis.get(carId).onComplete( value -> {
+        if (value.result() == null) {
+          rc.response()
+            .putHeader("content-type", "application/json")
+            .setStatusCode(HTTP_BAD_REQUEST)
+            .end(Json.encodePrettily(new JsonObject().put("response", "Id does not match our records")));
+          return;
+        }
+        rc.json(new JsonObject().put( carId, value.result().toString() ));
+      });
   }
 }
