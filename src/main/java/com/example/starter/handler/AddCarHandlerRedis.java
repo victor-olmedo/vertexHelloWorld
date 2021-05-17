@@ -1,12 +1,12 @@
 package com.example.starter.handler;
 
 import io.vertx.core.Handler;
-import io.vertx.core.MultiMap;
+import io.vertx.reactivex.core.MultiMap;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.redis.client.RedisAPI;
+import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.reactivex.redis.client.RedisAPI;
 import io.vertx.redis.client.RedisConnection;
 
 import java.util.ArrayList;
@@ -35,9 +35,9 @@ public class AddCarHandlerRedis  implements Handler<RoutingContext> {
 
 
     // Add new car to the database
-    redis.dbsize()
-      .onComplete(result -> {
-        String carId = Integer.toString((result.result().toInteger())+1);
+    redis.rxDbsize()
+      .subscribe(result -> {
+        String carId = Integer.toString((result.toInteger())+1);
 //        System.out.println(carId);
         ArrayList<String> input = new ArrayList<>();
         input.add(carId);

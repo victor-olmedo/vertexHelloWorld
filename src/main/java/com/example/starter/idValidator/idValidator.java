@@ -3,7 +3,7 @@ package com.example.starter.idValidator;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.RoutingContext;
+import io.vertx.reactivex.ext.web.RoutingContext;
 import io.vertx.redis.client.RedisConnection;
 
 import java.util.Optional;

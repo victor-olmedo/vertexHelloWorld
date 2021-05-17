@@ -6,8 +6,8 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.redis.client.RedisAPI;
+import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.reactivex.redis.client.RedisAPI;
 import io.vertx.redis.client.RedisConnection;
 
 import java.util.ArrayList;
@@ -29,12 +29,13 @@ public class RemoveCarHandlerRedis  implements Handler<RoutingContext> {
       // delete car from db
       ArrayList<String> input = new ArrayList<>();
       input.add(rc.pathParam("carId"));
-      redis.del(input).onSuccess( res -> {
+      redis.rxDel(input).subscribe( res -> {
 
         // Return that new car as a JSON file
         rc.json(Json.encodePrettily("<h1>Successfully deleted<h1>"));
-        }
-      ).onFailure(result -> rc.response()
+        },
+        //on error
+        result -> rc.response()
         .putHeader("content-type", "application/json")
         .setStatusCode(HTTP_BAD_REQUEST)
         .end(Json.encodePrettily(new JsonObject().put("response", "Id does not match our records"))));

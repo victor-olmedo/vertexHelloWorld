@@ -5,8 +5,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.redis.client.RedisAPI;
+import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.reactivex.redis.client.RedisAPI;
 import io.vertx.redis.client.RedisConnection;
 
 import java.util.Optional;
@@ -28,15 +28,24 @@ public class CarHandlerRedis implements Handler<RoutingContext> {
     // Return car info
 
     if (idValidator.validate(carId))
-      redis.get(carId).onComplete( value -> {
-        if (value.result() == null) {
-          rc.response()
-            .putHeader("content-type", "application/json")
-            .setStatusCode(HTTP_BAD_REQUEST)
-            .end(Json.encodePrettily(new JsonObject().put("response", "Id does not match our records")));
-          return;
-        }
-        rc.json(new JsonObject().put( carId, value.result().toString() ));
-      });
+      redis.rxGet(carId)
+        .subscribe(
+          value -> {
+            rc.json(new JsonObject().put( carId, value.toString() ));
+          },
+          // On Error
+          r -> {
+              rc.response()
+                .putHeader("content-type", "application/json")
+                .setStatusCode(HTTP_BAD_REQUEST)
+                .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong")));
+          },
+          // On empty response
+          () -> {
+            rc.response()
+              .putHeader("content-type", "application/json")
+              .setStatusCode(HTTP_BAD_REQUEST)
+              .end(Json.encodePrettily(new JsonObject().put("response", "Id does not match our records")));
+          });
   }
 }
