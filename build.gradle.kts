@@ -28,8 +28,9 @@ application {
 }
 
 dependencies {
-  implementation("io.vertx:vertx-redis-client:4.0.3")
+  implementation("org.hamcrest:hamcrest:2.2")
   implementation("org.slf4j:slf4j-api:1.7.25")
+  implementation("io.vertx:vertx-redis-client:4.0.3")
   implementation("io.vertx:vertx-mongo-client:4.0.3")
   implementation("io.vertx:vertx-rx-java2:4.0.3")
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))

@@ -22,7 +22,7 @@ public class ModifyCarHandler  implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext rc){
 
-    JsonObject responseJson = idValidator.validate(rc, db).get();
+    JsonObject responseJson = new idValidator().validate(rc, db).get();
 
     MultiMap attributes = rc.request().formAttributes();
 

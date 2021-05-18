@@ -21,7 +21,7 @@ public class RemoveCarHandler  implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext rc){
 
-    JsonObject responseJson = idValidator.validate(rc, db).get();
+    JsonObject responseJson = new idValidator().validate(rc, db).get();
 
     // Set all attributes to null
     responseJson

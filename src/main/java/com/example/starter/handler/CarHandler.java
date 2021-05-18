@@ -20,9 +20,9 @@ public class CarHandler implements Handler<RoutingContext> {
   public void handle(RoutingContext rc){
 
     // Check if given carID is a valid one
-    Optional<JsonObject> responseJson = idValidator.validate(rc, db);
+    Optional<JsonObject> responseJson = new idValidator().validate(rc, db);
 
     // Return car info
-    if (responseJson.isPresent()) rc.json(responseJson.get());
+    responseJson.ifPresent(rc::json);
   }
 }

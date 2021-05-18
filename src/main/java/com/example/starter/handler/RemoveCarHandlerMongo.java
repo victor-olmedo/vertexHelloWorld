@@ -9,10 +9,10 @@ import io.vertx.reactivex.ext.web.RoutingContext;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
-public class CarHandlerMongo implements Handler<RoutingContext> {
+public class RemoveCarHandlerMongo implements Handler<RoutingContext> {
   private MongoClient client;
 
-  public CarHandlerMongo(MongoClient client){
+  public RemoveCarHandlerMongo(MongoClient client){
     this.client = client;
   }
 
@@ -26,23 +26,17 @@ public class CarHandlerMongo implements Handler<RoutingContext> {
       query.put("_id", Integer.parseInt(carId));
     else
       query.put("_id", carId);
-    client.rxFind("cars", query)
+    client.rxRemoveDocument("cars", query)
       .subscribe(
         value -> {
-          if(!value.isEmpty())
-            rc.json(value.get(0));
-          else
-            rc.response()
-              .putHeader("content-type", "application/json")
-              .setStatusCode(HTTP_BAD_REQUEST)
-              .end(Json.encodePrettily(new JsonObject().put("response", "Car not found")));
+          rc.json(new JsonObject().put("response", "Deleted Successfully"));
         },
         // On Error
         r -> {
           rc.response()
             .putHeader("content-type", "application/json")
             .setStatusCode(HTTP_BAD_REQUEST)
-            .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong")));
+            .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong "+r.toString())));
         });
   }
 }
