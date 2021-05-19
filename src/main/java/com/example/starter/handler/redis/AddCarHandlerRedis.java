@@ -1,4 +1,4 @@
-package com.example.starter.handler;
+package com.example.starter.handler.redis;
 
 import io.vertx.core.Handler;
 import io.vertx.reactivex.core.MultiMap;

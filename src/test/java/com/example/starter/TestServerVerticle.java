@@ -1,13 +1,11 @@
 package com.example.starter;
 
-import com.sun.tools.javac.Main;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.http.HttpClient;
-import io.vertx.reactivex.core.http.HttpClientResponse;
+import io.vertx.reactivex.core.http.HttpClientRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,12 +15,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(VertxExtension.class)
-public class TestMainVerticle {
+public class TestServerVerticle {
 
   @BeforeEach
   @DisplayName("Deploy a verticle")
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
-    vertx.rxDeployVerticle(new MainVerticle()).doOnSuccess(r -> testContext.succeeding(id -> testContext.completeNow()));
+    vertx.rxDeployVerticle(new ServerVerticle()).doOnSuccess(r -> testContext.succeeding(id -> testContext.completeNow()));
   }
 
   @Test
@@ -35,7 +33,7 @@ public class TestMainVerticle {
   void http_server_check_response(Vertx vertx, VertxTestContext testContext) {
     HttpClient client = vertx.createHttpClient();
     client.rxRequest(HttpMethod.GET, 8888, "localhost", "/hello")
-      .compose(s -> s.doOnSuccess(req -> req.rxSend()))
+      .compose(s -> s.doOnSuccess(HttpClientRequest::rxSend))
       .doOnSuccess(r -> testContext.succeeding(buffer -> testContext.verify(() -> {
         assertThat(buffer.toString(), is(equalTo("Hello")));
         testContext.completeNow();

@@ -1,4 +1,4 @@
-package com.example.starter.handler;
+package com.example.starter.handler.mongo;
 
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
@@ -11,10 +11,10 @@ import java.util.ArrayList;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
-public class AddCarHandlerMongo implements Handler<RoutingContext> {
+public class AddCarHandler implements Handler<RoutingContext> {
   private MongoClient client;
 
-  public AddCarHandlerMongo(MongoClient client){
+  public AddCarHandler(MongoClient client){
     this.client = client;
   }
 

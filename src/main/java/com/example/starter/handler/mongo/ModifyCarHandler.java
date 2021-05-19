@@ -1,4 +1,4 @@
-package com.example.starter.handler;
+package com.example.starter.handler.mongo;
 
 import com.example.starter.idValidator.idValidator;
 import io.vertx.core.Handler;
@@ -10,10 +10,10 @@ import io.vertx.reactivex.ext.web.RoutingContext;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
-public class ModifyCarHandlerMongo implements Handler<RoutingContext> {
-  private MongoClient client;
+public class ModifyCarHandler implements Handler<RoutingContext> {
+  private final MongoClient client;
 
-  public ModifyCarHandlerMongo(MongoClient client){
+  public ModifyCarHandler(MongoClient client){
     this.client = client;
   }
 
@@ -58,11 +58,9 @@ public class ModifyCarHandlerMongo implements Handler<RoutingContext> {
               .end(Json.encodePrettily(new JsonObject().put("response", "Car not found")));
         },
         // On Error
-        r -> {
-          rc.response()
-            .putHeader("content-type", "application/json")
-            .setStatusCode(HTTP_BAD_REQUEST)
-            .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong")));
-        });
+        r -> rc.response()
+          .putHeader("content-type", "application/json")
+          .setStatusCode(HTTP_BAD_REQUEST)
+          .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong"))));
   }
 }

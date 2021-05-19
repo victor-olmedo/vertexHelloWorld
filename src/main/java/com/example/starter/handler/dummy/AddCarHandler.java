@@ -1,4 +1,4 @@
-package com.example.starter.handler;
+package com.example.starter.handler.dummy;
 
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;

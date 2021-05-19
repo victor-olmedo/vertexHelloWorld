@@ -1,23 +1,24 @@
 package com.example.starter;
 
 import com.example.starter.Router.myRouter;
+import com.example.starter.db.MongoDB;
 import io.reactivex.Completable;
 import io.vertx.reactivex.core.AbstractVerticle;
 
 
 
-public class MainVerticle extends AbstractVerticle {
+public class ServerVerticle extends AbstractVerticle {
 
   private static final Integer port = 8888;
   private static final String mongoConfig = "mongodb://root:example@localhost:27017/cars?authSource=admin";
-//  private static final String dbPath = "src/main/java/com/example/starter/db/dummy_database.json";
 
   @Override
   public Completable rxStart() {
 
     // Configure Router
     myRouter router = new myRouter(vertx);
-    router.configureRouter(mongoConfig);
+    MongoDB mongo = new MongoDB(vertx, mongoConfig);
+    router.configureRouter(mongo.getClient());
 
     // Create the HTTP server
     // Handle every request using the router

@@ -1,4 +1,4 @@
-package com.example.starter.handler;
+package com.example.starter.handler.mongo;
 
 import com.example.starter.idValidator.idValidator;
 import io.vertx.core.Handler;
@@ -9,10 +9,10 @@ import io.vertx.reactivex.ext.web.RoutingContext;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
-public class RemoveCarHandlerMongo implements Handler<RoutingContext> {
+public class RemoveCarHandler implements Handler<RoutingContext> {
   private MongoClient client;
 
-  public RemoveCarHandlerMongo(MongoClient client){
+  public RemoveCarHandler(MongoClient client){
     this.client = client;
   }
 
@@ -28,15 +28,13 @@ public class RemoveCarHandlerMongo implements Handler<RoutingContext> {
       query.put("_id", carId);
     client.rxRemoveDocument("cars", query)
       .subscribe(
-        value -> {
-          rc.json(new JsonObject().put("response", "Deleted Successfully"));
-        },
+        value ->
+          rc.json(new JsonObject().put("response", "Deleted Successfully")),
         // On Error
-        r -> {
+        r ->
           rc.response()
-            .putHeader("content-type", "application/json")
-            .setStatusCode(HTTP_BAD_REQUEST)
-            .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong "+r.toString())));
-        });
+          .putHeader("content-type", "application/json")
+          .setStatusCode(HTTP_BAD_REQUEST)
+          .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong "+r.toString()))));
   }
 }

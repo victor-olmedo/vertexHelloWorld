@@ -1,4 +1,4 @@
-package com.example.starter.handler;
+package com.example.starter.handler.redis;
 
 import com.example.starter.idValidator.idValidator;
 import io.vertx.core.Handler;
@@ -30,22 +30,16 @@ public class CarHandlerRedis implements Handler<RoutingContext> {
     if (idValidator.validate(carId))
       redis.rxGet(carId)
         .subscribe(
-          value -> {
-            rc.json(new JsonObject().put( carId, value.toString() ));
-          },
+          value -> rc.json(new JsonObject().put( carId, value.toString() )),
           // On Error
-          r -> {
-              rc.response()
-                .putHeader("content-type", "application/json")
-                .setStatusCode(HTTP_BAD_REQUEST)
-                .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong")));
-          },
+          r -> rc.response()
+            .putHeader("content-type", "application/json")
+            .setStatusCode(HTTP_BAD_REQUEST)
+            .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong"))),
           // On empty response
-          () -> {
-            rc.response()
-              .putHeader("content-type", "application/json")
-              .setStatusCode(HTTP_BAD_REQUEST)
-              .end(Json.encodePrettily(new JsonObject().put("response", "Id does not match our records")));
-          });
+          () -> rc.response()
+            .putHeader("content-type", "application/json")
+            .setStatusCode(HTTP_BAD_REQUEST)
+            .end(Json.encodePrettily(new JsonObject().put("response", "Id does not match our records"))));
   }
 }

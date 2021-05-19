@@ -1,4 +1,4 @@
-package com.example.starter.handler;
+package com.example.starter.handler.redis;
 
 import com.example.starter.idValidator.idValidator;
 import io.vertx.core.Handler;
