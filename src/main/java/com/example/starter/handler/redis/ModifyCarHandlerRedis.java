@@ -1,17 +1,13 @@
 package com.example.starter.handler.redis;
 
-import com.example.starter.idValidator.idValidator;
+import com.example.starter.handler.idValidator.IdValidatorHandler;
 import io.vertx.core.Handler;
-import io.vertx.core.MultiMap;
 import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.web.RoutingContext;
 import io.vertx.reactivex.redis.client.RedisAPI;
-import io.vertx.redis.client.RedisConnection;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
@@ -26,7 +22,7 @@ public class ModifyCarHandlerRedis  implements Handler<RoutingContext> {
   public void handle(RoutingContext rc){
     String carId = rc.pathParam("carId");
 
-    if(idValidator.validate(carId) && rc.request().formAttributes().get("car_make") != null){
+    if(IdValidatorHandler.validateHelper(carId) && rc.request().formAttributes().get("car_make") != null){
       ArrayList<String> input = new ArrayList<>();
       input.add(carId);
       redis.rxExists(input).subscribe(

@@ -1,37 +1,26 @@
 package com.example.starter.handler.mongo;
 
-import com.example.starter.idValidator.idValidator;
+import com.example.starter.db.MongoDB;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.MultiMap;
-import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.RoutingContext;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
 public class ModifyCarHandler implements Handler<RoutingContext> {
-  private final MongoClient client;
+  private final MongoDB client;
 
-  public ModifyCarHandler(MongoClient client){
+  public ModifyCarHandler(MongoDB client){
     this.client = client;
   }
 
   @Override
   public void handle(RoutingContext rc){
-    String carId = rc.pathParam("carId");
 
-    JsonObject query = new JsonObject();
+    JsonObject car = rc.get("car");
     JsonObject replace = new JsonObject();
-    // Return car info
-    if (idValidator.validate(carId)){
-      query.put("_id", Integer.parseInt(carId));
-      replace.put("_id", Integer.parseInt(carId));
-    }
-    else{
-      query.put("_id", carId);
-      replace.put("_id", carId);
-    }
 
     // Modify the car
     MultiMap attributes = rc.request().formAttributes();
@@ -46,7 +35,7 @@ public class ModifyCarHandler implements Handler<RoutingContext> {
       replace
         .put("car_model_year", attributes.get("car_model_year"));
 
-    client.rxFindOneAndReplace("cars", query, replace)
+    client.modify(car, replace)
       .subscribe(
         value -> {
           if(!value.isEmpty())

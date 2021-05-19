@@ -1,18 +1,18 @@
 package com.example.starter.handler.mongo;
 
-import com.example.starter.idValidator.idValidator;
+import com.example.starter.db.MongoDB;
+import com.example.starter.handler.idValidator.IdValidatorHandler;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.RoutingContext;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
 public class RemoveCarHandler implements Handler<RoutingContext> {
-  private MongoClient client;
+  private MongoDB client;
 
-  public RemoveCarHandler(MongoClient client){
+  public RemoveCarHandler(MongoDB client){
     this.client = client;
   }
 
@@ -22,11 +22,11 @@ public class RemoveCarHandler implements Handler<RoutingContext> {
 
     JsonObject query = new JsonObject();
     // Return car info
-    if (idValidator.validate(carId))
+    if (IdValidatorHandler.validateHelper(carId))
       query.put("_id", Integer.parseInt(carId));
     else
       query.put("_id", carId);
-    client.rxRemoveDocument("cars", query)
+    client.remove(query)
       .subscribe(
         value ->
           rc.json(new JsonObject().put("response", "Deleted Successfully")),

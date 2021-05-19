@@ -1,6 +1,6 @@
 package com.example.starter;
 
-import com.example.starter.Router.myRouter;
+import com.example.starter.Router.MyRouter;
 import com.example.starter.db.MongoDB;
 import io.reactivex.Completable;
 import io.vertx.reactivex.core.AbstractVerticle;
@@ -16,9 +16,9 @@ public class ServerVerticle extends AbstractVerticle {
   public Completable rxStart() {
 
     // Configure Router
-    myRouter router = new myRouter(vertx);
-    MongoDB mongo = new MongoDB(vertx, mongoConfig);
-    router.configureRouter(mongo.getClient());
+    MyRouter router = new MyRouter(vertx);
+    MongoDB mongo = new MongoDB(mongoConfig);
+    router.configureRouter(mongo);
 
     // Create the HTTP server
     // Handle every request using the router

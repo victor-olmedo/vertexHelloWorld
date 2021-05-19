@@ -10,16 +10,16 @@ import io.vertx.reactivex.core.AbstractVerticle;
 
 public class PopulateDbVerticle extends AbstractVerticle {
 
-  private static final String dbPath = "src/main/java/com/example/starter/db/dummy_database.json";
+  private static final String DB_PATH = "src/main/java/com/example/starter/db/dummy_database.json";
 
   @Override
   public Completable rxStart() {
 
     // Get mongo data
-    MongoDB mongo = new MongoDB(vertx, config().getValue("mongo").toString());
+    MongoDB mongo = new MongoDB(config().getValue("mongo").toString());
 
     // Read JSON file & populate DB with it
-    return readDB(dbPath)
+    return readDB(DB_PATH)
       .doOnSuccess(mongo::populateDB)
       .ignoreElement();
   }

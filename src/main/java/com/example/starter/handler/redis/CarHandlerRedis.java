@@ -1,15 +1,11 @@
 package com.example.starter.handler.redis;
 
-import com.example.starter.idValidator.idValidator;
+import com.example.starter.handler.idValidator.IdValidatorHandler;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.web.RoutingContext;
 import io.vertx.reactivex.redis.client.RedisAPI;
-import io.vertx.redis.client.RedisConnection;
-
-import java.util.Optional;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
@@ -27,7 +23,7 @@ public class CarHandlerRedis implements Handler<RoutingContext> {
 
     // Return car info
 
-    if (idValidator.validate(carId))
+    if (IdValidatorHandler.validateHelper(carId))
       redis.rxGet(carId)
         .subscribe(
           value -> rc.json(new JsonObject().put( carId, value.toString() )),

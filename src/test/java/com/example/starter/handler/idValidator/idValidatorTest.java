@@ -1,4 +1,4 @@
-package com.example.starter.idValidator;
+package com.example.starter.handler.idValidator;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,13 +13,13 @@ class idValidatorTest {
   @Test
   void testValidate() {
     String input = "1";
-    boolean output = idValidator.validate(input);
+    boolean output = IdValidatorHandler.validateHelper(input);
     assertTrue(output);
   }
   @Test
   void testValidateFalse() {
     String input = "a";
-    boolean output = idValidator.validate(input);
+    boolean output = IdValidatorHandler.validateHelper(input);
     assertFalse(output);
   }
 }

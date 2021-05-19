@@ -1,20 +1,18 @@
 package com.example.starter.handler.mongo;
 
+import com.example.starter.db.MongoDB;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.MultiMap;
-import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.RoutingContext;
-
-import java.util.ArrayList;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
 public class AddCarHandler implements Handler<RoutingContext> {
-  private MongoClient client;
+  private MongoDB client;
 
-  public AddCarHandler(MongoClient client){
+  public AddCarHandler(MongoDB client){
     this.client = client;
   }
 
@@ -40,12 +38,12 @@ public class AddCarHandler implements Handler<RoutingContext> {
 
 
     // Add new car to the database
-    client.rxInsert("cars", newCar)
+    client.insert(newCar)
       .subscribe(id -> {
         System.out.println(id);
         rc.json(newCar.put("_id", id));
       }, error -> {
-        System.out.println(error);
+        System.out.println(error.getMessage());
         rc.response()
           .putHeader("content-type", "application/json")
           .setStatusCode(HTTP_BAD_REQUEST)

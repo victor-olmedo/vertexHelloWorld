@@ -1,46 +1,41 @@
 package com.example.starter.handler.mongo;
 
-import com.example.starter.idValidator.idValidator;
+import com.example.starter.db.MongoDB;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.RoutingContext;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
 public class CarHandler implements Handler<RoutingContext> {
-  private MongoClient client;
+  private MongoDB client;
 
-  public CarHandler(MongoClient client){
+  public CarHandler(MongoDB client){
     this.client = client;
   }
 
   @Override
   public void handle(RoutingContext rc){
-    String carId = rc.pathParam("carId");
+    JsonObject car = rc.get("car");
 
-    JsonObject query = new JsonObject();
-    // Return car info
-    if (idValidator.validate(carId))
-      query.put("_id", Integer.parseInt(carId));
-    else
-      query.put("_id", carId);
-    client.rxFind("cars", query)
-      .subscribe(
-        value -> {
-          if(!value.isEmpty())
-            rc.json(value.get(0));
-          else
-            rc.response()
-              .putHeader("content-type", "application/json")
-              .setStatusCode(HTTP_BAD_REQUEST)
-              .end(Json.encodePrettily(new JsonObject().put("response", "Car not found")));
-        },
-        // On Error
-        r -> rc.response()
-          .putHeader("content-type", "application/json")
-          .setStatusCode(HTTP_BAD_REQUEST)
-          .end(Json.encodePrettily(new JsonObject().put("response", "Oops, something went wrong"))));
+    rc.json(car);
+
+//    car = new JsonObject().put("_id", rc.pathParam("carId"));
+//    client.find(car)
+//      .subscribe(
+//        rc::json,
+//        // On Error
+//        error ->
+//          response(rc, "Oops, something went wrong"),
+//        () -> response(rc, "Car not found"));
+
+  }
+
+  private void response(RoutingContext rc, String s) {
+    rc.response()
+      .putHeader("content-type", "application/json")
+      .setStatusCode(HTTP_BAD_REQUEST)
+      .end(Json.encodePrettily(new JsonObject().put("response", s)));
   }
 }
