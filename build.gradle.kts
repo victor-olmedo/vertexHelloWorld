@@ -31,7 +31,7 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:2.2")
   implementation("org.slf4j:slf4j-api:1.7.25")
-  implementation("io.cucumber:cucumber-java8:6.8.1")
+  implementation("io.cucumber:cucumber-java:6.8.1")
   implementation("io.cucumber:cucumber-junit:6.8.1")
   implementation("io.vertx:vertx-redis-client:4.0.3")
   implementation("io.vertx:vertx-mongo-client:4.0.3")
