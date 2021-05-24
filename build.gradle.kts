@@ -29,17 +29,17 @@ application {
 }
 
 dependencies {
-  implementation("org.hamcrest:hamcrest:2.2")
-  implementation("org.slf4j:slf4j-api:1.7.25")
-  implementation("io.cucumber:cucumber-java:6.8.1")
-  implementation("io.cucumber:cucumber-junit:6.8.1")
-  implementation("io.vertx:vertx-redis-client:4.0.3")
-  implementation("io.vertx:vertx-mongo-client:4.0.3")
-  implementation("io.vertx:vertx-rx-java2:4.0.3")
-  implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
-  implementation("io.vertx:vertx-web")
-  testImplementation("io.vertx:vertx-junit5")
-  testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+  compile("org.hamcrest:hamcrest:2.2")
+  compile("org.slf4j:slf4j-api:1.7.25")
+  testCompile("io.cucumber:cucumber-java:6.8.1")
+  testCompile("io.cucumber:cucumber-junit:6.8.1")
+  compile("io.vertx:vertx-redis-client:4.0.3")
+  compile("io.vertx:vertx-mongo-client:4.0.3")
+  compile("io.vertx:vertx-rx-java2:4.0.3")
+  compile(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
+  compile("io.vertx:vertx-web")
+  testCompile("io.vertx:vertx-junit5")
+  testCompile("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 }
 
 java {
@@ -55,7 +55,7 @@ tasks.withType<ShadowJar> {
   mergeServiceFiles()
 }
 
-tasks.withType<Test> {
+val test = tasks.withType<Test> {
   useJUnitPlatform()
   testLogging {
     events = setOf(PASSED, SKIPPED, FAILED)
@@ -64,4 +64,21 @@ tasks.withType<Test> {
 
 tasks.withType<JavaExec> {
   args = listOf("run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange")
+}
+
+sourceSets.create("acceptance") {
+  java.srcDir(file("src/acceptance/java"))
+  resources.srcDir(file("src/acceptance/resources"))
+  compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output + configurations.testRuntime
+  runtimeClasspath += output + compileClasspath
+}
+tasks.register<Test>("acceptance") {
+  description = "Runs the acceptance tests"
+  group = "verification"
+  testClassesDirs = sourceSets.getByName("acceptance").output.classesDirs
+  classpath = sourceSets.getByName("acceptance").runtimeClasspath
+  dependsOn(test)
+}
+tasks.check {
+  dependsOn(tasks.getByName("acceptance"))
 }

@@ -43,7 +43,7 @@ Feature: test
 
   Scenario Outline: modify car
     Given "<state>" car
-    Given "<idState>" id
+    Given "<idState>" id to modify
     When I ask to modify the car
     Then I should be told "<answer>"
 

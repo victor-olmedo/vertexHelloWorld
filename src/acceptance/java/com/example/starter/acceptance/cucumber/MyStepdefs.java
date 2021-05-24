@@ -1,4 +1,4 @@
-package com.example.starter.cucumber;
+package com.example.starter.acceptance.cucumber;
 
 import com.example.starter.ServerVerticle;
 import com.example.starter.handler.idValidator.IdValidatorHandler;
@@ -7,23 +7,16 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.cucumber.messages.internal.com.google.gson.reflect.TypeToken;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -35,14 +28,23 @@ public class MyStepdefs {
   private Vertx vertx = Vertx.vertx();
   private ServerVerticle sv;
 
-  public MyStepdefs() {
+//  @Before
+//  public void before(){
 //    sv = new ServerVerticle();
+//    vertx.rxDeployVerticle(sv);
+//    System.out.println("Verticle deployed");
+//  }
 //
-//    vertx.deployVerticle(sv);
+//  @After
+//  public void after(){
+//    vertx.undeploy(sv.deploymentID());
+//  }
+
+  public MyStepdefs() {
   }
 
   @Given("{string} id")
-  public void good_id(String state) {
+  public void id(String state) {
     // Write code here that turns the phrase above into concrete actions
     switch (state) {
       case "valid":
@@ -50,6 +52,19 @@ public class MyStepdefs {
         break;
       case "invalid":
         id = "alkdjfakjsdhf";
+        break;
+    }
+  }
+
+  @Given("{string} id to modify")
+  public void id_to_modify(String state) {
+    // Write code here that turns the phrase above into concrete actions
+    switch (state) {
+      case "valid":
+        id = "5";
+        break;
+      case "invalid":
+        id = "aninvalidcar";
         break;
     }
   }
@@ -143,4 +158,5 @@ public class MyStepdefs {
     }
     return HttpRequest.BodyPublishers.ofString(builder.toString());
   }
+
 }
